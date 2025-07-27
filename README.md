@@ -130,3 +130,56 @@ Script Python ini dirancang untuk menyinkronkan data secara real-time antara dua
 *   **Penanganan Error:** Meskipun script memiliki mekanisme antrian ulang, error struktural (misalnya, constraint pelanggaran yang tidak bisa diperbaiki otomatis, perbedaan skema yang signifikan) perlu ditangani secara manual.
 *   **Keamanan:** Jangan menyimpan file konfigurasi yang berisi password dalam repository publik. Pertimbangkan untuk menggunakan variabel lingkungan atau sistem manajemen secret.
 *   **Performa:** Sinkronisasi real-time bisa memberikan beban pada database. Pastikan server dan jaringan Anda mampu menanganinya, terutama jika jumlah tabel dan volume data tinggi.
+
+
+alat tambahan
+# SQL Server Table Config Generator
+
+Alat bantu untuk membuat file `table.txt` secara otomatis untuk script sinkronisasi database.
+
+## Fungsi
+Membaca struktur tabel dari database SQL Server (nama tabel, primary key, status identity, kolom) dan menghasilkan file konfigurasi `table.txt`.
+
+## Cara Pakai
+
+1.  **Siapkan Lingkungan:**
+    *   Pasang Python 3.x
+    *   Pasang pyodbc: `pip install pyodbc`
+    *   Pasang ODBC Driver 17 for SQL Server
+
+2.  **Buat File Konfigurasi:**
+    *   Buat file `odbc.txt` dengan format:
+        ```
+        <server>
+        <database>
+        <username>
+        <password>
+        ```
+    *   Contoh:
+        ```
+        localhost
+        MyDatabase
+        my_user
+        my_pass
+        ```
+
+3.  **Jalankan Script:**
+    ```bash
+    python table_config_generator.py
+    ```
+
+4.  **Hasil:**
+    *   File `table.txt` akan dibuat dengan daftar tabel dan konfigurasinya.
+    *   Contoh isi `table.txt`:
+      ```
+      Users:id=increment:id,name,email,created_at
+      Roles:role_id:id,name,description
+      ```
+
+5.  **Lanjutkan:**
+    *   Salin `table.txt` ke folder script sinkronisasi utama.
+    *   Edit `table.txt` jika perlu (hapus tabel, ubah kolom, tambah `:force_id`).
+
+## Catatan
+*   Hanya membaca tabel dari skema `dbo`.
+*   Perlu hak akses baca struktur database.
